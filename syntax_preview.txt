@@ -1,0 +1,18 @@
+/*comment*/
+;;comment
+
+set (hodnota) as <název nové proměné> of <datový typ>
+
+if (podmínka)
+	set (hodnota) as <název deklarované proměné>
+else if (podmínka)
+else
+branch ;;ukončení IFu
+
+add (hodnota) to <proměná>
+sub (hodnota) from <proměná>
+multiple <proměná> by (hodnota)
+divide <proměná> by (hodnota)
+
+/*tennary*/
+if (podmínka) (hodnota pravdy) else (hodnota nepravdy)
