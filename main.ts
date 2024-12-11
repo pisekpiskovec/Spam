@@ -1,11 +1,12 @@
 import Parser from "./frontend/parser.ts";
+import { evaluate } from "./runtime/interpreter.ts";
 
 shell();
 
 function shell(){
   const parser = new Parser();
-  console.log("\nSpamShell v0.1");
-  console.log("Type \"exit exit\" to exit");
+  console.log("\nSpamShell v0.2");
+  console.log("Type \"exit exit\" to exit\n");
   while(true){
     const input = prompt("spam");
     if(!input || input.includes("exit exit")){
@@ -13,6 +14,7 @@ function shell(){
     }
 
     const program = parser.produceAST(input);
-    console.log(program);
+    const result = evaluate(program);
+    console.log(result);
   }
 }
