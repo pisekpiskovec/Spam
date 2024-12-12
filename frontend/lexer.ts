@@ -1,7 +1,7 @@
 export enum TokenType {
-  Null,
   Number,
   Identifier,
+  String,
   Set,
   BinaryOperator,
   Equals,
@@ -13,7 +13,6 @@ export enum TokenType {
 const KEYWORDS: Record<string, TokenType> = {
   set: TokenType.Set,
   as: TokenType.Equals,
-  null: TokenType.Null,
 };
 
 export interface Token {
