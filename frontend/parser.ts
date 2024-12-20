@@ -1,4 +1,4 @@
-import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier } from "./ast.ts";
+import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier, VariableDeclaration } from "./ast.ts";
 import { tokenize, Token, TokenType} from "./lexer.ts"; 
 
 export default class Parser {
@@ -40,7 +40,36 @@ export default class Parser {
   }
 
   private parseStatement(): Statement{
-    return this.parseExpression();
+    switch(this.at().type){
+      // case TokenType.Number:
+      // case TokenType.Identifier:
+      // case TokenType.String:
+      case TokenType.Set:
+      case TokenType.Const:
+        return this.parseVariableDeclaration();
+      // case TokenType.BinaryOperator:
+      // case TokenType.Equals:
+      // case TokenType.OpenParen:
+      // case TokenType.CloseParen:
+      // case TokenType.EOF:
+      default:
+        return this.parseExpression();
+    }
+  }
+
+  parseVariableDeclaration(): Statement{
+    const isConstant = this.advance().type == TokenType.Const;
+    const identifier = this.expect(TokenType.Identifier, "E: Expected identifier!!!").value;
+    if(this.at().type == TokenType.Semicolon){
+      this.advance();
+      if(isConstant) throw "E: Constants must have value!!";
+      return {kind: "VariableDeclaration", identifier, constant: false } as VariableDeclaration;
+    }
+
+    this.expect(TokenType.Equals, "E: Expected 'as'!!!");
+    const declaration = {kind: "VariableDeclaration", identifier, value: this.parseExpression(), constant: isConstant} as VariableDeclaration;
+    this.expect(TokenType.Semicolon, "E: Variable declaration must end with semicolon!!!");
+    return declaration;
   }
 
   private parseExpression():Expression{

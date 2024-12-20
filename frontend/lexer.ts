@@ -3,16 +3,19 @@ export enum TokenType {
   Identifier,
   String,
   Set,
+  Const,
   BinaryOperator,
   Equals,
   OpenParen,
   CloseParen,
   EOF,
+  Semicolon,
 }
 
 const KEYWORDS: Record<string, TokenType> = {
   set: TokenType.Set,
-  as: TokenType.Equals,
+  to: TokenType.Equals,
+  const: TokenType.Const,
 };
 
 export interface Token {
@@ -51,6 +54,8 @@ export function tokenize(source: string): Token[] {
       tokens.push(token(src.shift(), TokenType.BinaryOperator));
     } else if (src[0] == "=") {
       tokens.push(token(src.shift(), TokenType.Equals));
+    } else if (src[0] == ";") {
+      tokens.push(token(src.shift(), TokenType.Semicolon));
     } else {
       if(isInt(src[0])) {
         let num = "";
