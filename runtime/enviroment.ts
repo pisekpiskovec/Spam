@@ -24,7 +24,7 @@ export default class Enviroment{
   public assignVariable(varname:string, value: RuntimeValue): RuntimeValue{
     const env = this.resolve(varname);
     if(env.constants.has(varname))
-      throw `W: Cannot rewrite constant ${varname}`
+      throw `W: Cannot rewrite constant ${varname}`;
     
     env.variables.set(varname, value);
     return value;

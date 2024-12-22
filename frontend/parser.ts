@@ -1,4 +1,4 @@
-import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier, VariableDeclaration } from "./ast.ts";
+import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier, VariableDeclaration, AssigmentExpression } from "./ast.ts";
 import { tokenize, Token, TokenType} from "./lexer.ts"; 
 
 export default class Parser {
@@ -73,9 +73,19 @@ export default class Parser {
   }
 
   private parseExpression():Expression{
-    return this.parseAdditiveExpression();
+    return this.parseAssigmentExpression();
   }
 
+  private parseAssigmentExpression(): Expression{
+    const left = this.parseAdditiveExpression();
+    if(this.at().type == TokenType.Equals){
+      this.advance();
+      const value = this.parseAssigmentExpression();
+      return { value, assigne: left, kind: "AssigmentExpr"} as AssigmentExpression;
+    }
+    return left;
+  }
+  
   private parseAdditiveExpression(): Expression{
     let left = this.parseMultiplicativeExpression();
     while(this.at().value == "+" || this.at().value == "-"){

@@ -1,13 +1,15 @@
 import {RuntimeValue, NumberValue} from "./values.ts"
-import {BinaryExpression, Identifier, NumericLiteral, Program, Statement, VariableDeclaration} from "../frontend/ast.ts"
+import {AssigmentExpression, BinaryExpression, Identifier, NumericLiteral, Program, Statement, VariableDeclaration} from "../frontend/ast.ts"
 import Enviroment from "./enviroment.ts";
-import {evaluateBinaryExpression, evaluateIdentifier} from "./eval/expressions.ts"
+import {evaluateAssigment, evaluateBinaryExpression, evaluateIdentifier} from "./eval/expressions.ts"
 import {evaluateProgram, evaluateVariableDeclaration} from "./eval/statements.ts"
 
 export function evaluate (astNode: Statement, env: Enviroment): RuntimeValue{
   switch (astNode.kind){
     case "NumericLiteral":
       return { value: ((astNode as NumericLiteral).value), type: "number" } as NumberValue;
+      case "AssigmentExpr":
+        return evaluateAssigment(astNode as AssigmentExpression, env);
     case "BinaryExpr":
       return evaluateBinaryExpression(astNode as BinaryExpression, env);
     case "Program":

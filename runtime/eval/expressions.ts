@@ -1,4 +1,4 @@
-import { BinaryExpression, Identifier } from "../../frontend/ast.ts";
+import { AssigmentExpression, BinaryExpression, Identifier } from "../../frontend/ast.ts";
 import Enviroment from "../enviroment.ts";
 import { evaluate } from "../interpreter.ts";
 import { MK_NULL, NumberValue, RuntimeValue } from "../values.ts";
@@ -41,4 +41,11 @@ export function evaluateBinaryExpression(binop: BinaryExpression, env: Enviromen
 export function evaluateIdentifier(ident: Identifier, env: Enviroment): RuntimeValue{
   const val = env.lookupVariable(ident.symbol);
   return val;
+}
+
+export function evaluateAssigment(node: AssigmentExpression, env: Enviroment): RuntimeValue{
+  if(node.assigne.kind !== "Identifier") throw `E: Invalid left hand assigment expression ${JSON.stringify(node.assigne)}!!!`;
+
+  const varname = (node.assigne as Identifier).symbol;
+  return env.assignVariable(varname, evaluate(node.value, env));
 }

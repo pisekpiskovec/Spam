@@ -8,10 +8,9 @@ shell();
 function shell(){
   const parser = new Parser();
   const env = new Enviroment();
-  env.declareVariable("x", MK_NUMBER(100));
-  env.declareVariable("true", MK_BOOL(true));
-  env.declareVariable("false", MK_BOOL(false));
-  env.declareVariable("null", MK_NULL());
+  env.declareVariable("true", MK_BOOL(true), true);
+  env.declareVariable("false", MK_BOOL(false), true);
+  env.declareVariable("null", MK_NULL(), true);
   console.log("\nSpamShell v0.2");
   console.log("Type \"exit exit\" to exit\n");
   while(true){
