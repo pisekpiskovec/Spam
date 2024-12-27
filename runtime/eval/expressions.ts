@@ -1,7 +1,7 @@
-import { AssigmentExpression, BinaryExpression, Identifier } from "../../frontend/ast.ts";
+import { AssigmentExpression, BinaryExpression, Identifier, ObjectLiteral } from "../../frontend/ast.ts";
 import Enviroment from "../enviroment.ts";
 import { evaluate } from "../interpreter.ts";
-import { MK_NULL, NumberValue, RuntimeValue } from "../values.ts";
+import { MK_NULL, NumberValue, ObjectValue, RuntimeValue } from "../values.ts";
 
 function evaluateNumericExpression(lhs: NumberValue, rhs: NumberValue, opr: string):NumberValue{
   let result: number = 0;
@@ -48,4 +48,13 @@ export function evaluateAssigment(node: AssigmentExpression, env: Enviroment): R
 
   const varname = (node.assigne as Identifier).symbol;
   return env.assignVariable(varname, evaluate(node.value, env));
+}
+
+export function evaluateObjectExpression(obj: ObjectLiteral, env: Enviroment): RuntimeValue{
+  const object = {type: "object", properties: new Map()} as ObjectValue
+  for(const {key, value} of obj.properties){
+    const runtimeVal = (value == undefined) ? env.lookupVariable(key) : evaluate(value, env);
+    object.properties.set(key, runtimeVal)
+  }
+  return object;
 }

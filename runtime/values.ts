@@ -1,4 +1,4 @@
-export type ValueType = "null" | "number" | "boolean";
+export type ValueType = "null" | "number" | "boolean" | "object";
 
 export interface RuntimeValue {
   type: ValueType;
@@ -33,3 +33,9 @@ export function MK_BOOL(b?: boolean){
   else
     return {type: "boolean", value: b} as BooleanValue;
 }
+
+export interface ObjectValue extends RuntimeValue {
+  type: "object";
+  properties: Map<string, RuntimeValue>;
+}
+

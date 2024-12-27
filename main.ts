@@ -1,16 +1,24 @@
 import Parser from "./frontend/parser.ts";
-import Enviroment from "./runtime/enviroment.ts";
+import Enviroment, { createGlobalEnvironment } from "./runtime/enviroment.ts";
 import { evaluate } from "./runtime/interpreter.ts";
-import { MK_BOOL, MK_NULL, MK_NUMBER, NumberValue } from "./runtime/values.ts";
 
-shell();
+// shell();
+run("test.spam");
+
+async function run(filename:string){
+  const parser = new Parser();
+  const env = createGlobalEnvironment();
+
+  const input = await Deno.readTextFile(filename);
+  const program = parser.produceAST(input);
+  const result = evaluate(program, env);
+  console.log(result);
+}
 
 function shell(){
   const parser = new Parser();
-  const env = new Enviroment();
-  env.declareVariable("true", MK_BOOL(true), true);
-  env.declareVariable("false", MK_BOOL(false), true);
-  env.declareVariable("null", MK_NULL(), true);
+  const env = createGlobalEnvironment();
+
   console.log("\nSpamShell v0.2");
   console.log("Type \"exit exit\" to exit\n");
   while(true){

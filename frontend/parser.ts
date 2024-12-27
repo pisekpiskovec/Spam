@@ -1,4 +1,4 @@
-import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier, VariableDeclaration, AssigmentExpression } from "./ast.ts";
+import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier, VariableDeclaration, AssigmentExpression, Property, ObjectLiteral } from "./ast.ts";
 import { tokenize, Token, TokenType} from "./lexer.ts"; 
 
 export default class Parser {
@@ -77,7 +77,7 @@ export default class Parser {
   }
 
   private parseAssigmentExpression(): Expression{
-    const left = this.parseAdditiveExpression();
+    const left = this.parseObjectExpression();
     if(this.at().type == TokenType.Equals){
       this.advance();
       const value = this.parseAssigmentExpression();
@@ -85,7 +85,34 @@ export default class Parser {
     }
     return left;
   }
-  
+
+  private parseObjectExpression():Expression{
+    if(this.at().type !== TokenType.OpenBrace) return this.parseAdditiveExpression();
+
+    this.advance();
+    const properties = new Array<Property>();
+    while(this.notEOF() && this.at().type != TokenType.CloseBrace){
+      const key = this.expect(TokenType.Identifier, "E: Identifier expected!!!").value;
+      
+      if(this.at().type == TokenType.Comma){
+        this.advance();
+        properties.push({key, kind: "Property", value: undefined} as Property);
+        continue;
+      } else if(this.at().type == TokenType.CloseBrace){
+        properties.push({key, kind: "Property" } as Property);
+        continue;
+      }
+
+      this.expect(TokenType.Colon, "E: Missing `:` following identifier");
+      const value = this.parseExpression();
+      properties.push({kind: "Property", value, key});
+      if(this.at().type != TokenType.CloseBrace) this.expect(TokenType.Comma, "E: Expected `,` or `}` following property");
+    }
+
+    this.expect(TokenType.CloseBrace, "E: Expected `]`!!!");
+    return {kind: "ObjectLiteral", properties} as ObjectLiteral;
+  }
+
   private parseAdditiveExpression(): Expression{
     let left = this.parseMultiplicativeExpression();
     while(this.at().value == "+" || this.at().value == "-"){

@@ -1,1 +1,9 @@
-set 45 = x
+const foo = 45/2;
+const obj = {
+	a: 100,
+	b: 32,
+	foo,
+	complex: {
+		bar: true,
+	},
+};
