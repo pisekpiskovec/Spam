@@ -1,4 +1,4 @@
-const foo = 45/2;
+set foo = 45/2;
 const obj = {
 	a: 100,
 	b: 32,
@@ -7,3 +7,6 @@ const obj = {
 		bar: true,
 	},
 };
+
+set f = obj.complex.bar;
+foo = obj.foo() + 5
