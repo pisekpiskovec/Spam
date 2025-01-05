@@ -1,7 +1,7 @@
-import { AssigmentExpression, BinaryExpression, Identifier, ObjectLiteral } from "../../frontend/ast.ts";
+import { AssigmentExpression, BinaryExpression, CallExpression, Identifier, ObjectLiteral } from "../../frontend/ast.ts";
 import Enviroment from "../enviroment.ts";
 import { evaluate } from "../interpreter.ts";
-import { MK_NULL, NumberValue, ObjectValue, RuntimeValue } from "../values.ts";
+import { MK_NULL, NativeFncValue, NumberValue, ObjectValue, RuntimeValue } from "../values.ts";
 
 function evaluateNumericExpression(lhs: NumberValue, rhs: NumberValue, opr: string):NumberValue{
   let result: number = 0;
@@ -57,4 +57,16 @@ export function evaluateObjectExpression(obj: ObjectLiteral, env: Enviroment): R
     object.properties.set(key, runtimeVal)
   }
   return object;
+}
+
+export function evaluateCallExpression(expr: CallExpression, env: Enviroment): RuntimeValue{
+  const args = expr.args.map((arg) => evaluate(arg, env));
+  const fn = evaluate(expr.caller, env);
+
+  if(fn.type !== "nativeFnc"){
+    throw "E: Cannot call value that isnt a function: " + JSON.stringify(fn);
+  }
+
+  const result = (fn as NativeFncValue).call(args, env);
+  return result;
 }

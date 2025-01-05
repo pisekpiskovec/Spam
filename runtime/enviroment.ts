@@ -1,10 +1,17 @@
-import {MK_BOOL, MK_NULL, RuntimeValue} from "./values.ts"
+import {MK_BOOL, MK_NATIVE_FNC, MK_NULL, RuntimeValue} from "./values.ts"
 
 export function createGlobalEnvironment(){
   const env = new Enviroment();
   env.declareVariable("true", MK_BOOL(true), true);
   env.declareVariable("false", MK_BOOL(false), true);
   env.declareVariable("null", MK_NULL(), true);
+
+  //Define native builtin method
+  env.declareVariable("spam", MK_NATIVE_FNC((args, scope) => {
+    console.log(...args);
+    return MK_NULL();
+  }), true);
+
   return env;
 }
 

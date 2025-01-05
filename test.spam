@@ -1,12 +1,4 @@
-set foo = 45/2;
-const obj = {
-	a: 100,
-	b: 32,
-	foo,
-	complex: {
-		bar: true,
-	},
-};
+set foo to 5 * 2;
+foo = foo / 4 + 5
 
-set f = obj.complex.bar;
-foo = obj.foo() + 5
+spam(foo, 45)

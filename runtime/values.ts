@@ -1,4 +1,5 @@
-export type ValueType = "null" | "number" | "boolean" | "object";
+import Environment from "./enviroment.ts";
+export type ValueType = "null" | "number" | "boolean" | "object" | "nativeFnc";
 
 export interface RuntimeValue {
   type: ValueType;
@@ -39,3 +40,13 @@ export interface ObjectValue extends RuntimeValue {
   properties: Map<string, RuntimeValue>;
 }
 
+export type FunctionCall = (args: RuntimeValue[], env: Environment) => RuntimeValue;
+
+export interface NativeFncValue extends RuntimeValue {
+  type: "nativeFnc";
+  call: FunctionCall;
+}
+
+export function MK_NATIVE_FNC(call: FunctionCall){
+  return { type: "nativeFnc", call } as NativeFncValue;
+}
