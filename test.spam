@@ -1,4 +1,6 @@
-set foo to 5 * 2;
-foo = foo / 4 + 5
-
-spam(foo, 45)
+fnc add (x, y) {
+	set result to x+y;
+	result
+}
+const result to add(10, 4);
+spam(result)

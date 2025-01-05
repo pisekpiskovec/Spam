@@ -1,8 +1,8 @@
 import {RuntimeValue, NumberValue} from "./values.ts"
-import {AssigmentExpression, BinaryExpression, CallExpression, Identifier, NumericLiteral, ObjectLiteral, Program, Statement, VariableDeclaration} from "../frontend/ast.ts"
+import {AssigmentExpression, BinaryExpression, CallExpression, FunctionDeclaration, Identifier, NumericLiteral, ObjectLiteral, Program, Statement, VariableDeclaration} from "../frontend/ast.ts"
 import Enviroment from "./enviroment.ts";
 import {evaluateAssigment, evaluateBinaryExpression, evaluateCallExpression, evaluateIdentifier, evaluateObjectExpression} from "./eval/expressions.ts"
-import {evaluateProgram, evaluateVariableDeclaration} from "./eval/statements.ts"
+import {evaluateFunctionDeclaration, evaluateProgram, evaluateVariableDeclaration} from "./eval/statements.ts"
 
 export function evaluate (astNode: Statement, env: Enviroment): RuntimeValue{
   switch (astNode.kind){
@@ -22,6 +22,8 @@ export function evaluate (astNode: Statement, env: Enviroment): RuntimeValue{
       return evaluateProgram(astNode as Program, env);
     case "VariableDeclaration":
       return evaluateVariableDeclaration(astNode as VariableDeclaration, env);
+    case "FunctionDeclaration":
+      return evaluateFunctionDeclaration(astNode as FunctionDeclaration, env);
     default:
       console.error("E: Interpreter: AST Node yet iterpretated!!", astNode);
       Deno.exit(0);

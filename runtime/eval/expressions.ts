@@ -1,7 +1,7 @@
 import { AssigmentExpression, BinaryExpression, CallExpression, Identifier, ObjectLiteral } from "../../frontend/ast.ts";
 import Enviroment from "../enviroment.ts";
 import { evaluate } from "../interpreter.ts";
-import { MK_NULL, NativeFncValue, NumberValue, ObjectValue, RuntimeValue } from "../values.ts";
+import { FunctionValue, MK_NULL, NativeFncValue, NumberValue, ObjectValue, RuntimeValue } from "../values.ts";
 
 function evaluateNumericExpression(lhs: NumberValue, rhs: NumberValue, opr: string):NumberValue{
   let result: number = 0;
@@ -63,10 +63,23 @@ export function evaluateCallExpression(expr: CallExpression, env: Enviroment): R
   const args = expr.args.map((arg) => evaluate(arg, env));
   const fn = evaluate(expr.caller, env);
 
-  if(fn.type !== "nativeFnc"){
-    throw "E: Cannot call value that isnt a function: " + JSON.stringify(fn);
+  if(fn.type == "nativeFnc"){
+    const result = (fn as NativeFncValue).call(args, env);
+    return result;
+  }
+  
+  if (fn.type == "function"){
+    const fnc = fn as FunctionValue;
+    const scope = new Enviroment(fnc.declarationEnvironment);
+    //Create the vars for parameters list
+    for(let i = 0; i < fnc.parameters.length; i++){
+      const varname = fnc.parameters[i];
+      scope.declareVariable(varname,args[i], false);
+    }
+    let result:RuntimeValue = MK_NULL();
+    for(const stmt of fnc.body) result = evaluate(stmt, scope);
+    return result;
   }
 
-  const result = (fn as NativeFncValue).call(args, env);
-  return result;
+  throw "E: Cannot call value that isnt a function: " + JSON.stringify(fn);
 }

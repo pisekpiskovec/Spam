@@ -1,5 +1,6 @@
 import Environment from "./enviroment.ts";
-export type ValueType = "null" | "number" | "boolean" | "object" | "nativeFnc";
+import {Statement} from "../frontend/ast.ts"
+export type ValueType = "null" | "number" | "boolean" | "object" | "nativeFnc" | "function";
 
 export interface RuntimeValue {
   type: ValueType;
@@ -49,4 +50,12 @@ export interface NativeFncValue extends RuntimeValue {
 
 export function MK_NATIVE_FNC(call: FunctionCall){
   return { type: "nativeFnc", call } as NativeFncValue;
+}
+
+export interface FunctionValue extends RuntimeValue {
+  type: "function";
+  name: string;
+  parameters: string[];
+  declarationEnvironment: Environment;
+  body: Statement[];
 }

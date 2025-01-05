@@ -4,6 +4,7 @@ export enum TokenType {
   String,
   Set,
   Const,
+  Fnc,
   BinaryOperator,
   Equals,
   Comma,
@@ -23,6 +24,7 @@ const KEYWORDS: Record<string, TokenType> = {
   set: TokenType.Set,
   to: TokenType.Equals,
   const: TokenType.Const,
+  fnc: TokenType.Fnc,
 };
 
 export interface Token {

@@ -1,4 +1,4 @@
-import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier, VariableDeclaration, AssigmentExpression, Property, ObjectLiteral, CallExpression, MemberExpression } from "./ast.ts";
+import { Statement, Program, Expression, BinaryExpression, NumericLiteral, Identifier, VariableDeclaration, AssigmentExpression, Property, ObjectLiteral, CallExpression, MemberExpression, FunctionDeclaration } from "./ast.ts";
 import { tokenize, Token, TokenType} from "./lexer.ts"; 
 
 export default class Parser {
@@ -41,21 +41,39 @@ export default class Parser {
 
   private parseStatement(): Statement{
     switch(this.at().type){
-      // case TokenType.Number:
-      // case TokenType.Identifier:
-      // case TokenType.String:
       case TokenType.Set:
       case TokenType.Const:
         return this.parseVariableDeclaration();
-      // case TokenType.BinaryOperator:
-      // case TokenType.Equals:
-      // case TokenType.OpenParen:
-      // case TokenType.CloseParen:
-      // case TokenType.EOF:
+      case TokenType.Fnc:
+        return this.parseFunctionDeclaration();
       default:
         return this.parseExpression();
     }
   }
+
+  parseFunctionDeclaration(): Statement{
+    this.advance(); //eat fnc keyword
+    const name = this.expect(TokenType.Identifier, "E: Expected function name after function keyword").value;
+    const args = this.parseArguments();
+    const params: string[] = [];
+    for(const arg of args){
+      if(arg.kind !== "Identifier"){
+        console.log(arg);
+        throw "E: Inside function declaration expected parameters to be of type string.";
+      }
+      params.push((arg as Identifier).symbol);
+    }
+
+    this.expect(TokenType.OpenBrace, "E: Expected function body!!!");
+    const body: Statement[] = [];
+    while(this.at().type !== TokenType.EOF && this.at().type !== TokenType.CloseBrace){
+      body.push(this.parseStatement());
+    }
+
+    this.expect(TokenType.CloseBrace, "E: Closing brace expected at the end of function declaration");
+    const fnc = { kind: "FunctionDeclaration", body, name, parameters: params, } as FunctionDeclaration;
+    return fnc;
+ }
 
   parseVariableDeclaration(): Statement{
     const isConstant = this.advance().type == TokenType.Const;
